@@ -1,0 +1,110 @@
+# ======================================================
+# 🔥 OS / Editor
+# ======================================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ======================================================
+# 🔐 Environment Variables
+# ======================================================
+.env
+.env.*
+!.env.example
+
+# ======================================================
+# 🐍 Python / Backend
+# ======================================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Backend Cache
+backend/.env
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Poetry
+poetry.toml
+
+# Pyenv
+.python-version
+
+# Mypy / Pytest / Coverage
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# Logs
+*.log
+logs/
+
+# ======================================================
+# 📦 Backend Runtime Artifacts
+# ======================================================
+
+# FastF1 Cache (CURRENTLY at root — consider moving to backend/)
+cache/
+
+# If you move it later:
+backend/cache/
+
+# Local telemetry exports
+*.parquet
+*.arrow
+
+# Local datasets
+data/
+datasets/
+
+# SQLite files
+*.sqlite
+*.sqlite3
+*.db
+
+# ======================================================
+# 🌐 Frontend / Next.js
+# ======================================================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Next.js environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+
+# ======================================================
+# 🐳 Docker
+# ======================================================
+docker-compose.override.yml
+*.pid
+
+# ======================================================
+# 🚂 Railway
+# ======================================================
+.railway/
+
+# ======================================================
+# 🧪 Test Artifacts
+# ======================================================
+.coverage.*
+pytest_cache/
+
+# ======================================================
+# 🧠 Misc
+# ======================================================
+*.tmp
+*.bak
+*.orig
