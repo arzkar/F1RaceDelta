@@ -84,3 +84,14 @@ poetry run python -m src.scripts.calibrate_season --year 2025
 ```
 
 This reads the clean, green-flag laps from your local NeonDB, runs the L-BFGS-B optimization loops, and natively updates the `degradation_models` DB tables.
+
+## Running the API Server
+
+Once your database is populated and calibrated, you can start the FastAPI backend server to serve the frontend and Monte Carlo simulations:
+
+```bash
+# From the backend directory:
+poetry run uvicorn src.api.main:app --reload
+```
+
+The server will be available at `http://localhost:8000`. You can also view the interactive API documentation at `http://localhost:8000/docs`.

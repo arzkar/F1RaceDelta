@@ -4,6 +4,7 @@ from sqlalchemy import select, and_
 from typing import List
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from uuid import UUID
 
 from src.db.session import get_db
 from src.db.models.race import Race
@@ -15,6 +16,7 @@ router = APIRouter()
 # --- Response Schemas ---
 
 class RaceBase(BaseModel):
+    id: UUID
     season: int
     grand_prix: str
     circuit: str

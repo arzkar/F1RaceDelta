@@ -2,16 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 import {
   Activity,
   BarChart2,
   GitCommit,
   Database,
   LayoutDashboard,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -22,9 +29,9 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 flex-shrink-0 bg-zinc-950 border-r border-zinc-800 flex flex-col h-full">
-      <div className="h-16 flex items-center px-6 border-b border-zinc-800">
-        <span className="text-xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
+    <aside className="w-64 flex-shrink-0 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="h-16 flex items-center px-6 border-b border-[var(--border)]">
+        <span className="text-xl font-bold tracking-tight flex items-center gap-2">
           <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse shadow-[0_0_10px_rgba(220,38,38,0.7)]" />
           F1RaceDelta
         </span>
@@ -39,12 +46,12 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-zinc-800 text-zinc-100"
-                  : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50"
+                  ? "bg-[var(--panel-hover)] text-[var(--fg)]"
+                  : "text-[var(--muted)] hover:text-[var(--fg)] hover:bg-[var(--panel)]"
               }`}
             >
               <item.icon
-                className={`w-5 h-5 ${isActive ? "text-blue-500" : "text-zinc-500"}`}
+                className={`w-5 h-5 ${isActive ? "text-blue-500" : "text-[var(--muted)]"}`}
               />
               {item.label}
             </Link>
@@ -52,9 +59,33 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-zinc-800">
-        <div className="px-3 py-2 rounded bg-zinc-900 border border-zinc-800 flex flex-col items-center justify-center">
-          <span className="text-xs text-zinc-500 uppercase tracking-wide font-bold">
+      <div className="p-4 border-t border-[var(--border)] space-y-3">
+        {/* Theme Toggle */}
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--fg)] border border-[var(--border)]"
+          aria-label="Toggle theme"
+        >
+          {mounted ? (
+            theme === "dark" ? (
+              <>
+                <Sun className="w-4 h-4" />
+                Light Mode
+              </>
+            ) : (
+              <>
+                <Moon className="w-4 h-4" />
+                Dark Mode
+              </>
+            )
+          ) : (
+            <span className="h-4" />
+          )}
+        </button>
+
+        {/* Engine Status */}
+        <div className="px-3 py-2 rounded bg-[var(--panel)] border border-[var(--border)] flex flex-col items-center justify-center">
+          <span className="text-xs text-[var(--muted)] uppercase tracking-wide font-bold">
             Engine Status
           </span>
           <span className="text-sm font-mono text-green-500 mt-1 flex items-center gap-2">

@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from src.db.session import get_db
 from src.db.models.degradation import DegradationModel
 from src.db.models.race import Race
-from src.domain.monte_carlo import HeadToHeadSimulator, SimulatorConfig
+from src.domain.monte_carlo import HeadToHeadSimulator, MonteCarloConfig
 
 logger = logging.getLogger(__name__)
 
@@ -113,24 +113,38 @@ def execute_monte_carlo(req: MonteCarloRequest, db: Session = Depends(get_db)):
     phys_fuel = PhysicsFuel(race.circuit_length_km, deg_a.fuel_per_km, deg_a.fuel_time_penalty_per_kg)
 
     # 3. Instantiate the Mathematical Head to Head Engine
-    config_a = SimulatorConfig(deg_model=phys_deg_a, starting_wear_laps=req.starting_wear_laps_a)
-    config_b = SimulatorConfig(deg_model=phys_deg_b, starting_wear_laps=req.starting_wear_laps_b)
+    mc_config = MonteCarloConfig(
+        iterations=req.iterations,
+        degradation_variance_percent=0.05,
+        dirty_air_penalty_seconds=0.8,
+        overtake_delta_threshold_seconds=0.5,
+        gap_threshold_seconds=1.0
+    )
 
     simulator = HeadToHeadSimulator(
         driver_a_code=req.driver_a_id,
+        driver_a_deg=phys_deg_a,
+        driver_a_fuel=phys_fuel,
         driver_b_code=req.driver_b_id,
-        fuel_model=phys_fuel,
-        config_a=config_a,
-        config_b=config_b,
-        base_lap_time_s=85.0 # We approximate a baseline lap time, although it's delta that matters
+        driver_b_deg=phys_deg_b,
+        driver_b_fuel=phys_fuel,
+        config=mc_config
     )
 
     # 4. Trigger Execution
+    # We assign Driver A and Driver B theoretical baseline lap times.
+    # We deduct tyre age offset if present.
+    base_lap = 85.0
+
+    # Starting offset physics (simulated tyre age wear pre-applied to the baseline pace)
+    base_lap_a = base_lap + (req.starting_wear_laps_a * phys_deg_a.base_wear_rate)
+    base_lap_b = base_lap + (req.starting_wear_laps_b * phys_deg_b.base_wear_rate)
+
     results = simulator.run_monte_carlo(
-        iterations=req.iterations,
-        laps=req.total_laps,
-        starting_gap_s=req.starting_gap_s,
-        base_variance_s=0.2 # Tightly bounded variance
+        base_lap_a=base_lap_a,
+        base_lap_b=base_lap_b,
+        total_laps=req.total_laps,
+        start_gap_ab=req.starting_gap_s
     )
 
     duration_ms = (time.perf_counter() - start) * 1000.0
@@ -153,7 +167,7 @@ def execute_monte_carlo(req: MonteCarloRequest, db: Session = Depends(get_db)):
         driver_b_code=req.driver_b_id,
         iterations_run=req.iterations,
         duration_ms=duration_ms,
-        driver_a_win_pct=results["driver_a_win_pct"],
-        driver_b_win_pct=results["driver_b_win_pct"],
-        mean_gap_at_flag_s=results["final_gap_mean_s"]
+        driver_a_win_pct=results.get("win_probability_a", 0.0),
+        driver_b_win_pct=results.get("win_probability_b", 0.0),
+        mean_gap_at_flag_s=0.0 # Not aggregated natively in this particular wrapper implementation yet
     )

@@ -21,9 +21,11 @@ export function MonteCarloChart({
       tooltip: {
         trigger: "axis",
         axisPointer: { type: "shadow" },
-        formatter: (params: any) => {
+        formatter: (
+          params: echarts.DefaultLabelFormatterCallbackParams[] | any,
+        ) => {
           const data = params[0];
-          return `<div style="font-family: monospace; font-size: 14px;"><strong>${data.name}</strong><br/>Win Probability: ${data.value.toFixed(1)}%</div>`;
+          return `<div style="font-family: monospace; font-size: 14px;"><strong>${data.name}</strong><br/>Win Probability: ${(data.value as number).toFixed(1)}%</div>`;
         },
         backgroundColor: "#18181b",
         textStyle: { color: "#fafafa" },
@@ -63,16 +65,10 @@ export function MonteCarloChart({
             color: "#fff",
           },
           itemStyle: {
-            color: new (window as any).echarts.graphic.LinearGradient(
-              0,
-              0,
-              1,
-              0,
-              [
-                { offset: 0, color: "#2563eb" },
-                { offset: 1, color: "#3b82f6" },
-              ],
-            ),
+            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+              { offset: 0, color: "#2563eb" },
+              { offset: 1, color: "#3b82f6" },
+            ]),
             borderRadius: [8, 0, 0, 8], // SaaS rounded edges
           },
           data: [winPctA],
@@ -90,16 +86,10 @@ export function MonteCarloChart({
             color: "#fff",
           },
           itemStyle: {
-            color: new (window as any).echarts.graphic.LinearGradient(
-              0,
-              0,
-              1,
-              0,
-              [
-                { offset: 0, color: "#f43f5e" },
-                { offset: 1, color: "#e11d48" },
-              ],
-            ),
+            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+              { offset: 0, color: "#f43f5e" },
+              { offset: 1, color: "#e11d48" },
+            ]),
             borderRadius: [0, 8, 8, 0],
           },
           data: [winPctB],

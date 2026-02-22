@@ -11,6 +11,7 @@ export interface TelemetryData {
 
 self.onmessage = async (e: MessageEvent) => {
   const url = e.data.url as string;
+  const wasmUrl = e.data.wasmUrl as string;
 
   try {
     // 1. Fetch the raw binary ArrayBuffer from the Cloudflare R2 presigned URL
@@ -26,7 +27,9 @@ self.onmessage = async (e: MessageEvent) => {
 
     // 2. Initialize the WebAssembly module
     // We use the WASM Engine to rapidly decode the parquet structure without JS object overhead
-    await parquet.default();
+    // The absolute wasmUrl is passed from the main thread since workers in blob contexts
+    // cannot resolve relative or root-relative paths.
+    await parquet.default(wasmUrl);
 
     // 3. Decode the Parquet file
     // Read the entire file into memory as an Arrow Table representation
@@ -56,10 +59,17 @@ self.onmessage = async (e: MessageEvent) => {
       { success: true, ipcBuffer: ipcBuffer },
       [ipcBuffer.buffer],
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    let errorMessage = "Unknown error occurred";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === "string") {
+      errorMessage = error;
+    }
+
     (self as unknown as Worker).postMessage({
       success: false,
-      error: error.message,
+      error: errorMessage,
     });
   }
 };

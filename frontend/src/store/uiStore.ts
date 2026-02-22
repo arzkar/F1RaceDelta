@@ -1,14 +1,5 @@
 import { create } from "zustand";
 
-interface ValidationState {
-  season: number | null;
-  raceId: string | null;
-  driverA: string | null;
-  driverB: string | null;
-  compoundA: string | null;
-  compoundB: string | null;
-}
-
 interface UiStore {
   // Global Selections
   selectedSeason: number;
@@ -21,7 +12,7 @@ interface UiStore {
   // Actions
   setSeason: (season: number) => void;
   setRace: (raceId: string) => void;
-  setDrivers: (driverA: string, driverB: string) => void;
+  setDrivers: (driverA: string | null, driverB: string | null) => void;
 }
 
 export const useUiStore = create<UiStore>((set) => ({
@@ -44,5 +35,5 @@ export const useUiStore = create<UiStore>((set) => ({
       selectedDriverB: null,
     }),
   setDrivers: (driverA, driverB) =>
-    set({ selectedDriverA: driverA, selectedDriverB: driverB }),
+    set({ selectedDriverA: driverA || null, selectedDriverB: driverB || null }),
 }));

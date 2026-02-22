@@ -1,6 +1,6 @@
 import logging
 import numpy as np
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Optional
 from scipy.optimize import minimize
 from pydantic import BaseModel
 
