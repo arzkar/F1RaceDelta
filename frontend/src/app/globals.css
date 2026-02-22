@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  /* F1 Race Delta Theme Palette */
+  --color-background: #09090b; /* Deep Asphalt */
+  --color-foreground: #fafafa;
+
+  --color-panel: #18181b; /* Slightly lighter for cards/sidebars */
+  --color-panel-hover: #27272a;
+
+  --color-accent: #3b82f6; /* SaaS Primary Blue */
+  --color-accent-hover: #2563eb;
+
+  --color-soft: #ef4444; /* F1 Soft (Red) */
+  --color-medium: #eab308; /* F1 Medium (Yellow) */
+  --color-hard: #f3f4f6; /* F1 Hard (White) */
+  --color-intermediate: #22c55e; /* F1 Inter (Green) */
+  --color-wet: #3b82f6; /* F1 Wet (Blue) */
+
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Force dark mode behavior across the entire app */
+:root {
+  color-scheme: dark;
+  --background: #09090b;
+  --foreground: #fafafa;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Premium Scrollbar for Dark Mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+/* Base utility for ECharts containers */
+.echart-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
