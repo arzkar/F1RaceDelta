@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry==1.8.3
+RUN pip install poetry==2.0.1
 
 COPY pyproject.toml poetry.lock ./
 # Install cleanly without dev dependencies like pytest
