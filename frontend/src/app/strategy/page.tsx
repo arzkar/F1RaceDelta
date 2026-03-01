@@ -72,8 +72,11 @@ export default function StrategyPage() {
         ...updated[index],
         laps: Math.max(1, Math.min(100, Number(value))),
       };
-    } else {
-      updated[index] = { ...updated[index], [field]: value };
+    } else if (field === "compound") {
+      updated[index] = {
+        ...updated[index],
+        compound: value as string,
+      };
     }
     setStints(updated);
   };
