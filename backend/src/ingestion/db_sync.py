@@ -21,6 +21,18 @@ def clean_float(val: Any) -> float | None:
         return None
     return float(val)
 
+def _get_circuit_length(session: fastf1.core.Session) -> float:
+    """Extracts circuit length in km from FastF1 session or falls back to known data."""
+    # FastF1 >= 3.x exposes circuit_info with circuit length
+    try:
+        ci = session.get_circuit_info()
+        if hasattr(ci, 'circuit_length') and ci.circuit_length:
+            return round(float(ci.circuit_length) / 1000.0, 3)  # meters → km
+    except Exception:
+        pass
+    return 0.0
+
+
 def sync_macro_data(db: Session, session: fastf1.core.Session, force: bool = False):
     """
     Syncs Core Macro Data for Phase 2A: Race, Drivers, Stints, Laps.
@@ -28,13 +40,18 @@ def sync_macro_data(db: Session, session: fastf1.core.Session, force: bool = Fal
     """
     event = session.event
 
+    # Extract race metadata from the session
+    laps_df_pre = session.laps
+    total_laps = int(laps_df_pre['LapNumber'].max()) if not laps_df_pre.empty else 0
+    circuit_length_km = _get_circuit_length(session)
+
     # 1. Upsert Race
     race_stmt = insert(Race).values(
         season=event.year,
         grand_prix=event.EventName,
         circuit=event.Location,
-        circuit_length_km=0.0,
-        total_laps=0,
+        circuit_length_km=circuit_length_km,
+        total_laps=total_laps,
         race_date=event.EventDate.to_pydatetime() if pd.notnull(event.EventDate) else None
     )
 
